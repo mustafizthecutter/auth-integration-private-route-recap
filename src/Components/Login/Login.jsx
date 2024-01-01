@@ -24,7 +24,7 @@ const Login = () => {
                             <label className="label">
                                 <span className="label-text">Name</span>
                             </label>
-                            <input type="name" name="name" placeholder="name" className="input input-bordered" required />
+                            <input type="text" name="name" placeholder="name" className="input input-bordered" required />
                         </div>
                         <div className="form-control">
                             <label className="label">
