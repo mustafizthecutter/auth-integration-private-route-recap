@@ -1,6 +1,9 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
+import { sendEmailVerification } from "firebase/auth";
+
+// import auth from "../../Firebase/firebase-auth-config";
 
 const Register = () => {
     const { createUser } = useContext(AuthContext)
@@ -12,10 +15,17 @@ const Register = () => {
         console.log(email, password, name);
 
         createUser(email, password)
-            .then(result => {
+            .then((result) => {
                 console.log(result.user);
+                const currentUser = result.user;
+                sendEmailVerification(currentUser)
+                    .then(() => {
+                        alert('please verify your email!!!')
+                    })
+                e.target.reset()
             })
             .catch(error => console.error(error.message));
+
     };
 
     return (

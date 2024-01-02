@@ -39,10 +39,12 @@ const AuthProvider = ({ children }) => {
     const signInWithGoogle = () => {
         return signInWithPopup(auth, googleProvider);
     };
-    
+
     const signInWithGithub = () => {
         return signInWithPopup(auth, githubProvider);
     };
+
+
 
 
     const authInfo = { user, createUser, signInUser, logOut, loading, signInWithGoogle, signInWithGithub };

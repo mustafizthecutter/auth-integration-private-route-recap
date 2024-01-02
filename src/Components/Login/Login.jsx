@@ -1,12 +1,20 @@
-import { useContext } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
+import { sendPasswordResetEmail, updateProfile } from "firebase/auth";
+import auth from "../../Firebase/firebase-auth-config";
+
 
 const Login = () => {
 
     const { signInUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
 
     const navigate = useNavigate();
+
+    const emailRef = useRef();
+
+    const [emailChange, setEmailChange] = useState('')
+
 
     const handleLogin = e => {
         e.preventDefault();
@@ -18,6 +26,11 @@ const Login = () => {
         signInUser(email, password)
             .then(result => {
                 console.log(result.user);
+                updateProfile(result.user, { displayName: name, photoURL: "https://example.com/jane-q-user/profile.jpg" })
+                    .then(() => { })
+                    .catch(error => {
+                        console.error(error.message);
+                    });
                 e.target.reset();
                 navigate('/');
             })
@@ -46,6 +59,33 @@ const Login = () => {
             });
     }
 
+    const handleForgetPassword = () => {
+
+
+        // const email = emailRef.current.value;
+        // if (!email) {
+        //     console.log('please provide a email');
+        //     return;
+        // }
+        // else if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email)) {
+        //     console.log('please input a valid email');
+        //     return;
+        // }
+
+        sendPasswordResetEmail(auth, emailChange)
+            .then(() => {
+                alert('please check your email')
+                navigate('/login')
+            })
+            .catch(error => {
+                console.error(error.message);
+            })
+    }
+
+    const handleEmailChange = e => {
+        setEmailChange(e.target.value);
+    }
+
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col ">
@@ -65,7 +105,7 @@ const Login = () => {
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
-                            <input type="email" name="email" placeholder="email" className="input input-bordered" required />
+                            <input onChange={handleEmailChange} type="email" ref={emailRef} name="email" placeholder="email" className="input input-bordered" required />
                         </div>
                         <div className="form-control">
                             <label className="label">
@@ -73,7 +113,7 @@ const Login = () => {
                             </label>
                             <input type="password" name="password" placeholder="password" className="input input-bordered" required />
                             <label className="label">
-                                <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                                <button onClick={handleForgetPassword} >Forgot password?</button>
                             </label>
                         </div>
                         <div className="form-control mt-6">
@@ -88,5 +128,4 @@ const Login = () => {
         </div>
     );
 };
-
 export default Login;
