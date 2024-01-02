@@ -1,7 +1,12 @@
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../Provider/AuthProvider";
 
 const Login = () => {
 
+    const { signInUser, signInWithGoogle, signInWithGithub } = useContext(AuthContext);
+
+    const navigate = useNavigate();
 
     const handleLogin = e => {
         e.preventDefault();
@@ -9,7 +14,37 @@ const Login = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email, password, name);
+
+        signInUser(email, password)
+            .then(result => {
+                console.log(result.user);
+                e.target.reset();
+                navigate('/');
+            })
+            .catch(error => {
+                console.error(error.message);
+            })
     };
+
+    const handleGoogle = () => {
+        signInWithGoogle()
+            .then(result => {
+                console.log(result.user);
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+    };
+
+    const handleGithub = () => {
+        signInWithGithub()
+            .then(result => {
+                console.log(result.user);
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+    }
 
     return (
         <div className="hero min-h-screen bg-base-200">
@@ -46,6 +81,8 @@ const Login = () => {
                         </div>
                         <p>New Here?? Please <Link to={'/register'}> <button className="btn btn-success">Register</button></Link></p>
                     </form>
+                    <button onClick={handleGoogle} className="btn btn-secondary mb-4">Google</button>
+                    <button onClick={handleGithub} className="btn btn-error">Github</button>
                 </div>
             </div>
         </div>
